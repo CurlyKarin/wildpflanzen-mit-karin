@@ -1,2 +1,4 @@
 # wildpflanzen-mit-karin
-landing page Wildpflanzen-mit-karin.de
+Moderne Landingpage für Coaching rund um essbare Wildpflanzen
+Region Braunschweig / Wolfenbüttel
+Inhalte verwaltet über Sanity CMS
