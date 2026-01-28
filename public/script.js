@@ -16,8 +16,12 @@ function getImageUrl(imageField) {
   if (!imageField?.asset?._ref) return null
   const ref = imageField.asset._ref // z.B. "image-<id>-2000x1000-jpg"
   const parts = ref.split('-')
-  // [ "image", "<id>", "2000x1000", "jpg" ] -> "<id>-2000x1000-jpg"
-  const fileName = parts.slice(1).join('-')
+  // ["image", "<id>", "2000x1000", "jpg"]
+  if (parts.length !== 4 || parts[0] !== 'image') return null
+  const id = parts[1]
+  const dimensions = parts[2]
+  const format = parts[3]
+  const fileName = `${id}-${dimensions}.${format}`
   return `${IMAGE_BASE_URL}/${fileName}`
 }
 
