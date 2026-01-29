@@ -59,5 +59,27 @@ async function loadAbout() {
   `
 }
 
+// CERTIFICATES
+async function loadCertificates() {
+  const certificates = await fetchSanity(`*[_type == "certificate"]{title, image}`)
+  if (!certificates || certificates.length === 0) return
+
+  const items = certificates.map(cert => {
+    const img = getImageUrl(cert.image)
+    const thumb = img ? `${img}?w=600&auto=format` : null
+    return `
+      <article class="certificate-item">
+        ${thumb ? `<img src="${thumb}" alt="${cert.title || ''}" class="certificate-image">` : ''}
+        <h3 class="certificate-title">${cert.title || ''}</h3>
+      </article>
+    `
+  }).join('')
+
+  document.getElementById('certificate').innerHTML = `
+    <h2>Zertifikate</h2>
+    <div class="certificate-grid">${items}</div>
+  `
+}
 loadHero()
 loadAbout()
+loadCertificates()

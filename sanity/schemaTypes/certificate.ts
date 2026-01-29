@@ -8,17 +8,15 @@ export const certificate = defineType({
     defineField({
       name: 'title',
       title: 'Titel',
-      type: 'string'
+      type: 'string',
+      validation: Rule => Rule.required()
     }),
     defineField({
-      name: 'description',
-      title: 'Beschreibung',
-      type: 'text'
-    }),
-    defineField({
-      name: 'link',
-      title: 'Link zum Zertifikat',
-      type: 'url'
+      name: 'image',
+      title: 'Bild',
+      type: 'image',
+      options: {hotspot: true},
+      validation: Rule => Rule.required()
     })
   ]
 })
