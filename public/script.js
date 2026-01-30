@@ -36,7 +36,6 @@ async function loadHero() {
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
     <h1>${hero.headline}</h1>
     <p>${hero.subheadline || ''}</p>
-    <a href="#contact" class="hero-button">${hero.ctaText || 'Jetzt anfragen'}</a>
   `
 }
 
@@ -96,7 +95,30 @@ async function loadContact() {
   `
 }
 
+// NAVIGATION - Mobile menu toggle
+function initNavigation() {
+  const navToggle = document.querySelector('.nav-toggle')
+  const navMenu = document.querySelector('.nav-menu')
+  const navLinks = document.querySelectorAll('.nav-menu a')
+
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('nav-menu-open')
+      navToggle.classList.toggle('nav-toggle-open')
+    })
+  }
+
+  // Close menu when clicking a link
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('nav-menu-open')
+      navToggle.classList.remove('nav-toggle-open')
+    })
+  })
+}
+
 loadHero()
 loadAbout()
 loadCertificates()
 loadContact()
+initNavigation()
