@@ -36,7 +36,7 @@ async function loadHero() {
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
     <h1>${hero.headline}</h1>
     <p>${hero.subheadline || ''}</p>
-    <button>${hero.ctaText || 'Kontakt'}</button>
+    <a href="#contact" class="hero-button">${hero.ctaText || 'Jetzt anfragen'}</a>
   `
 }
 
@@ -69,8 +69,8 @@ async function loadCertificates() {
     const thumb = img ? `${img}?w=600&auto=format` : null
     return `
       <article class="certificate-item">
-        ${thumb ? `<img src="${thumb}" alt="${cert.title || ''}" class="certificate-image">` : ''}
         <h3 class="certificate-title">${cert.title || ''}</h3>
+        ${thumb ? `<img src="${thumb}" alt="${cert.title || ''}" class="certificate-image">` : ''}
       </article>
     `
   }).join('')
@@ -80,6 +80,23 @@ async function loadCertificates() {
     <div class="certificate-grid">${items}</div>
   `
 }
+
+// CONTACT
+async function loadContact() {
+  const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
+  const email = settings?.email || 'kontakt@example.com'
+
+  document.getElementById('contact').innerHTML = `
+    <h2>Kontakt</h2>
+    <div class="contact-content">
+      <p>Ich biete verschiedene Coaching-Angebote zu essbaren Wildpflanzen an. Ob Einzelcoaching, Gruppenkurse oder Workshops – gemeinsam entdecken wir die Vielfalt der Natur.</p>
+      <p>Hast du Fragen zu meinen Angeboten oder möchtest du einen Termin vereinbaren? Dann melde dich gerne bei mir!</p>
+      <a href="mailto:${email}?subject=Anfrage%20zu%20Wildpflanzen-Coaching" class="contact-button">Jetzt anfragen</a>
+    </div>
+  `
+}
+
 loadHero()
 loadAbout()
 loadCertificates()
+loadContact()
