@@ -95,6 +95,42 @@ async function loadContact() {
   `
 }
 
+// PARALLAX EFFECT for Hero image
+function initParallax() {
+  const heroImage = document.querySelector('.hero-image')
+  if (!heroImage) return
+
+  let ticking = false
+
+  function updateParallax() {
+    const scrolled = window.pageYOffset
+    const hero = document.getElementById('hero')
+    if (!hero) return
+    
+    const heroHeight = hero.offsetHeight
+    const heroTop = hero.offsetTop
+    
+    // Only apply parallax when hero is in view
+    if (scrolled < heroTop + heroHeight) {
+      // Parallax: image moves slower (50% speed)
+      const parallaxSpeed = 0.5
+      const yPos = -(scrolled - heroTop) * parallaxSpeed
+      heroImage.style.transform = `translate3d(0, ${yPos}px, 0)`
+    }
+    
+    ticking = false
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateParallax)
+      ticking = true
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true })
+}
+
 // NAVIGATION - Mobile menu toggle
 function initNavigation() {
   const navToggle = document.querySelector('.nav-toggle')
@@ -122,3 +158,7 @@ loadAbout()
 loadCertificates()
 loadContact()
 initNavigation()
+// Wait for hero to load before initializing parallax
+setTimeout(() => {
+  initParallax()
+}, 100)

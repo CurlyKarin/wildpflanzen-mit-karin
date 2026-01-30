@@ -151,6 +151,8 @@ header {
     background-position: center;
     filter: brightness(0.6);
     z-index: 0;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 header > * {
@@ -160,10 +162,14 @@ header > * {
 
 header h1 {
     margin: 0 0 0.5rem 0;
+    color: white !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 header p {
     margin: 0 0 1rem 0;
+    color: white !important;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .hero-button {
