@@ -109,13 +109,20 @@ function initParallax() {
     
     const heroHeight = hero.offsetHeight
     const heroTop = hero.offsetTop
+    const heroBottom = heroTop + heroHeight
     
     // Only apply parallax when hero is in view
-    if (scrolled < heroTop + heroHeight) {
-      // Parallax: image moves slower (50% speed)
-      const parallaxSpeed = 0.5
+    if (scrolled < heroBottom) {
+      // Parallax: image moves slower (30% speed for subtler effect)
+      const parallaxSpeed = 0.3
       const yPos = -(scrolled - heroTop) * parallaxSpeed
-      heroImage.style.transform = `translate3d(0, ${yPos}px, 0)`
+      // Limit movement to prevent gaps
+      const maxMove = heroHeight * 0.3
+      const limitedYPos = Math.max(-maxMove, yPos)
+      heroImage.style.transform = `translate3d(0, ${limitedYPos}px, 0)`
+    } else {
+      // Reset when scrolled past
+      heroImage.style.transform = `translate3d(0, ${-heroHeight * 0.3}px, 0)`
     }
     
     ticking = false
