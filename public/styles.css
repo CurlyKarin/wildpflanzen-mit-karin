@@ -226,10 +226,15 @@ h3 {
     margin-top: 2rem;
 }
 
+#about h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
 .about-content {
     display: flex;
-    gap: 2rem;
-    align-items: flex-start;
+    gap: 2.5rem;
+    align-items: start;
     flex-wrap: wrap;
 }
 
@@ -238,23 +243,32 @@ h3 {
     flex-direction: column;
     align-items: flex-start;
     flex-shrink: 0;
+    margin-top: 0;
 }
 
 .about-portrait {
-    max-width: 320px;
-    width: 100%;
+    max-width: 350px;
+    max-height: 500px;
+    width: auto;
+    height: auto;
     border-radius: 0;
-    object-fit: cover;
-    align-self: flex-start;
+    object-fit: contain;
+    object-position: top;
 }
 
 .about-text {
-    flex: 1 1 300px;
-    align-self: flex-start;
+    flex: 1 1 350px;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.about-text p:first-child {
+    margin-top: 0;
 }
 
 .about-text p {
     margin-bottom: 1.2rem;
+    margin-top: 0;
     line-height: 1.8;
 }
 
