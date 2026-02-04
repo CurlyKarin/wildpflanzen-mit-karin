@@ -49,10 +49,14 @@ async function loadAbout() {
   document.getElementById('about').innerHTML = `
     <h2>Über mich</h2>
     <div class="about-content">
-      ${portraitUrl ? `<img src="${portraitUrl}" alt="Portrait von Karin" class="about-portrait">` : ''}
+      ${portraitUrl ? `
+        <div class="about-image-wrapper">
+          <img src="${portraitUrl}" alt="Portrait von Karin" class="about-portrait">
+          ${about.photographerLink ? `<p class="photo-credit"><a href="${about.photographerLink}" target="_blank" rel="noopener noreferrer">Foto: zur Fotografin</a></p>` : ''}
+        </div>
+      ` : ''}
       <div class="about-text">
-        <p>${about.text || ''}</p>
-        ${about.photographerLink ? `<p class="photo-credit"><a href="${about.photographerLink}" target="_blank" rel="noopener noreferrer">Foto: zur Fotografin</a></p>` : ''}
+        ${about.text ? about.text.split('\n\n').map(para => para.trim() ? `<p>${para.trim()}</p>` : '').join('') : ''}
       </div>
     </div>
   `
