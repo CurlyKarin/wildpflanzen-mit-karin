@@ -72,8 +72,8 @@ async function loadCertificates() {
     const thumb = img ? `${img}?w=600&auto=format` : null
     return `
       <article class="certificate-item">
-        <h3 class="certificate-title">${cert.title || ''}</h3>
         ${thumb ? `<img src="${thumb}" alt="${cert.title || ''}" class="certificate-image">` : ''}
+        <h3 class="certificate-title">${cert.title || ''}</h3>
       </article>
     `
   }).join('')
