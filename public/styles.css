@@ -466,8 +466,9 @@ footer > p {
     color: #1a3d1a;
 }
 
-/* IMPRESSUM PAGE */
-#impressum {
+/* IMPRESSUM & DATENSCHUTZ PAGE */
+#impressum,
+#datenschutz {
     margin-top: 2rem;
     max-width: 800px;
     margin-left: auto;
