@@ -308,14 +308,10 @@ h3 {
 }
 
 .contact-content {
-    max-width: 600px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.contact-content p {
-    margin-bottom: 1.5rem;
-    line-height: 1.7;
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 .contact-button {
@@ -328,11 +324,26 @@ h3 {
     font-size: 1.1rem;
     font-weight: 500;
     transition: background 0.2s;
-    margin-top: 1rem;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .contact-button:hover {
     background: #1a3d1a;
+}
+
+.contact-text {
+    flex: 1 1 400px;
+}
+
+.contact-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    text-align: left;
+}
+
+.contact-text p:last-child {
+    margin-bottom: 0;
 }
 
 /* CERTIFICATES */
@@ -420,6 +431,15 @@ html {
     .certificate-item {
         width: 100%;
         min-width: auto;
+    }
+    
+    .contact-content {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .contact-button {
+        align-self: flex-start;
     }
 }
 
