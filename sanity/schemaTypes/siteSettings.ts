@@ -50,6 +50,38 @@ export const siteSettings = defineType({
       title: 'Ort',
       type: 'string',
       description: 'Für Impressum'
+    }),
+    defineField({
+      name: 'navigationItems',
+      title: 'Navigation',
+      type: 'array',
+      description: 'Menüpunkte für die Hauptnavigation',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Text',
+              type: 'string',
+              validation: Rule => Rule.required()
+            }),
+            defineField({
+              name: 'href',
+              title: 'Link',
+              type: 'string',
+              description: 'z.B. #about oder index.html#contact',
+              validation: Rule => Rule.required()
+            })
+          ],
+          preview: {
+            select: {
+              title: 'label',
+              subtitle: 'href'
+            }
+          }
+        }
+      ]
     })
   ]
 })

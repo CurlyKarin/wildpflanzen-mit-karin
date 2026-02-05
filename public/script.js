@@ -46,13 +46,15 @@ async function loadAbout() {
 
   const portraitUrl = getImageUrl(about.portrait)
 
+  const photographerText = about.photographerLinkText || 'Foto: zur Fotografin'
+
   document.getElementById('about').innerHTML = `
     <h2>Über mich</h2>
     <div class="about-content">
       ${portraitUrl ? `
         <div class="about-image-wrapper">
           <img src="${portraitUrl}" alt="Portrait von Karin" class="about-portrait">
-          ${about.photographerLink ? `<p class="photo-credit"><a href="${about.photographerLink}" target="_blank" rel="noopener noreferrer">Foto: zur Fotografin</a></p>` : ''}
+          ${about.photographerLink ? `<p class="photo-credit"><a href="${about.photographerLink}" target="_blank" rel="noopener noreferrer">${photographerText}</a></p>` : ''}
         </div>
       ` : ''}
       <div class="about-text">
@@ -82,6 +84,38 @@ async function loadCertificates() {
     <h2>Zertifikate</h2>
     <div class="certificate-grid">${items}</div>
   `
+}
+
+// NAVIGATION
+async function loadNavigation() {
+  const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
+  if (!settings) return
+
+  // Logo-Text aus siteTitle laden
+  const logoEl = document.querySelector('.nav-logo')
+  if (logoEl && settings.siteTitle) {
+    logoEl.textContent = settings.siteTitle
+  }
+
+  // Menüpunkte aus navigationItems laden
+  const navMenu = document.querySelector('.nav-menu')
+  if (navMenu && settings.navigationItems && settings.navigationItems.length > 0) {
+    const menuItems = settings.navigationItems.map(item => 
+      `<li><a href="${item.href}">${item.label}</a></li>`
+    ).join('')
+    navMenu.innerHTML = menuItems
+    
+    // Event-Listener für Menü-Schließen neu setzen (da Menü neu gerendert wurde)
+    const navLinks = navMenu.querySelectorAll('a')
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const navMenuEl = document.querySelector('.nav-menu')
+        const navToggleEl = document.querySelector('.nav-toggle')
+        if (navMenuEl) navMenuEl.classList.remove('nav-menu-open')
+        if (navToggleEl) navToggleEl.classList.remove('nav-toggle-open')
+      })
+    })
+  }
 }
 
 // CONTACT
@@ -213,6 +247,9 @@ function scrollToHash() {
 
 // Load all content and handle hash navigation
 async function loadAllContent() {
+  // Navigation zuerst laden, damit Menüpunkte verfügbar sind
+  await loadNavigation()
+  
   await Promise.all([
     loadHero(),
     loadAbout(),
@@ -220,12 +257,14 @@ async function loadAllContent() {
     loadContact()
   ])
   
+  // Navigation-Event-Listener nach dem Laden setzen
+  initNavigation()
+  
   // Scroll to hash if present (e.g., from external link)
   scrollToHash()
 }
 
 loadAllContent()
-initNavigation()
 initScrollToTop()
 // Wait for hero to load before initializing parallax
 setTimeout(() => {

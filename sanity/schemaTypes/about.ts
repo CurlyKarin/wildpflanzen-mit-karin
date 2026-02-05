@@ -20,6 +20,13 @@ export const about = defineType({
       name: 'photographerLink',
       title: 'Link zur Fotografin',
       type: 'url'
+    }),
+    defineField({
+      name: 'photographerLinkText',
+      title: 'Text für Fotografin-Link',
+      type: 'string',
+      description: 'z.B. "Foto: zur Fotografin" oder "Foto: Name der Fotografin"',
+      initialValue: 'Foto: zur Fotografin'
     })
   ]
 })
