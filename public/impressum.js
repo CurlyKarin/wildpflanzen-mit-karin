@@ -120,6 +120,15 @@ async function loadImpressum() {
   }
 }
 
+// Load page title from Sanity
+async function loadPageTitle() {
+  const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
+  if (settings?.siteTitle) {
+    document.title = `Impressum - ${settings.siteTitle}`
+  }
+}
+
+loadPageTitle()
 loadNavigation()
 loadHero()
 loadImpressum()

@@ -254,8 +254,45 @@ function scrollToHash() {
   }
 }
 
+// Load page title from Sanity
+async function loadPageTitle() {
+  const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
+  if (settings?.siteTitle) {
+    document.title = settings.siteTitle
+  }
+}
+
+// Sanfte Fade-in Animation beim Scrollen
+function initScrollAnimations() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1'
+        entry.target.style.transform = 'translateY(0)'
+      }
+    })
+  }, observerOptions)
+
+  // Alle Sektionen beobachten
+  const sections = document.querySelectorAll('section')
+  sections.forEach(section => {
+    section.style.opacity = '0'
+    section.style.transform = 'translateY(30px)'
+    section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
+    observer.observe(section)
+  })
+}
+
 // Load all content and handle hash navigation
 async function loadAllContent() {
+  // Page title zuerst laden
+  await loadPageTitle()
+  
   // Navigation zuerst laden, damit Menüpunkte verfügbar sind
   await loadNavigation()
   
@@ -268,6 +305,11 @@ async function loadAllContent() {
   
   // Navigation-Event-Listener nach dem Laden setzen
   initNavigation()
+  
+  // Scroll-Animationen initialisieren
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
   
   // Scroll to hash if present (e.g., from external link)
   scrollToHash()
