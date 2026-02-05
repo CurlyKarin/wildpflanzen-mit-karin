@@ -52,9 +52,18 @@ async function loadNavigation() {
   // Menüpunkte aus navigationItems laden
   const navMenu = document.querySelector('.nav-menu')
   if (navMenu && settings.navigationItems && settings.navigationItems.length > 0) {
-    const menuItems = settings.navigationItems.map(item => 
-      `<li><a href="${item.href}">${item.label}</a></li>`
-    ).join('')
+    // Erkenne aktuelle Seite: Wenn nicht index.html, dann index.html voranstellen
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html'
+    const isSubPage = currentPage !== 'index.html' && currentPage !== ''
+    
+    const menuItems = settings.navigationItems.map(item => {
+      // Wenn href mit # beginnt und wir auf einer Sub-Seite sind, index.html voranstellen
+      let href = item.href
+      if (isSubPage && href.startsWith('#')) {
+        href = `index.html${href}`
+      }
+      return `<li><a href="${href}">${item.label}</a></li>`
+    }).join('')
     navMenu.innerHTML = menuItems
     
     // Event-Listener für Menü-Schließen neu setzen (da Menü neu gerendert wurde)

@@ -70,7 +70,7 @@ export const siteSettings = defineType({
               name: 'href',
               title: 'Link',
               type: 'string',
-              description: 'z.B. #about oder index.html#contact',
+              description: 'Hash-Link zur Sektion (z.B. #about, #certificate, #contact). Auf Unterseiten wird automatisch index.html vorangestellt.',
               validation: Rule => Rule.required()
             })
           ],
