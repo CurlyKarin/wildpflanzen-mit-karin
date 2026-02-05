@@ -3,12 +3,39 @@ const DATASET = 'production'
 const API_VERSION = '2023-10-01'
 
 const BASE_URL = `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}`
+const IMAGE_BASE_URL = `https://cdn.sanity.io/images/${PROJECT_ID}/${DATASET}`
 
 async function fetchSanity(query) {
   const url = `${BASE_URL}?query=${encodeURIComponent(query)}`
   const response = await fetch(url)
   const data = await response.json()
   return data.result
+}
+
+function getImageUrl(imageField) {
+  if (!imageField?.asset?._ref) return null
+  const ref = imageField.asset._ref
+  const parts = ref.split('-')
+  if (parts.length !== 4 || parts[0] !== 'image') return null
+  const id = parts[1]
+  const dimensions = parts[2]
+  const format = parts[3]
+  const fileName = `${id}-${dimensions}.${format}`
+  return `${IMAGE_BASE_URL}/${fileName}`
+}
+
+// Load hero image
+async function loadHero() {
+  const hero = await fetchSanity(`*[_type == "hero"][0]`)
+  if (!hero) return
+
+  const heroImageUrl = getImageUrl(hero.image)
+
+  document.getElementById('hero').innerHTML = `
+    ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
+    <h1>${hero.headline}</h1>
+    <p>${hero.subheadline || ''}</p>
+  `
 }
 
 // Load datenschutz data from siteSettings
@@ -52,4 +79,5 @@ async function loadDatenschutz() {
   }
 }
 
+loadHero()
 loadDatenschutz()

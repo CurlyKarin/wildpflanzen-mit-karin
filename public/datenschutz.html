@@ -8,6 +8,22 @@
 </head>
 <body>
 
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Wildpflanzen mit Karin</a>
+            <button class="nav-toggle" aria-label="Menü öffnen">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html#about">Über mich</a></li>
+                <li><a href="index.html#certificate">Zertifikate</a></li>
+                <li><a href="index.html#contact">Kontakt</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <header id="hero">
         <h1>Wildpflanzen mit Karin</h1>
         <p>Essbare Wildpflanzen Coaching | Braunschweig & Wolfenbüttel</p>
@@ -58,5 +74,27 @@
         <p>© Karin · Wildpflanzen entdecken und genießen</p>
     </footer>
     <script src="datenschutz.js"></script>
+    <script>
+        // Navigation toggle for datenschutz page
+        document.addEventListener('DOMContentLoaded', function() {
+            const navToggle = document.querySelector('.nav-toggle')
+            const navMenu = document.querySelector('.nav-menu')
+            const navLinks = document.querySelectorAll('.nav-menu a')
+
+            if (navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('nav-menu-open')
+                    navToggle.classList.toggle('nav-toggle-open')
+                })
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('nav-menu-open')
+                    navToggle.classList.remove('nav-toggle-open')
+                })
+            })
+        })
+    </script>
 </body>
 </html>

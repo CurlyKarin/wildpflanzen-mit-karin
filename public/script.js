@@ -166,11 +166,67 @@ function initNavigation() {
   })
 }
 
-loadHero()
-loadAbout()
-loadCertificates()
-loadContact()
+// SCROLL TO TOP BUTTON
+function initScrollToTop() {
+  const scrollButton = document.querySelector('.scroll-to-top')
+  if (!scrollButton) return
+
+  // Show/hide button based on scroll position
+  function toggleScrollButton() {
+    if (window.pageYOffset > 300) {
+      scrollButton.classList.add('scroll-to-top-visible')
+    } else {
+      scrollButton.classList.remove('scroll-to-top-visible')
+    }
+  }
+
+  // Scroll to top on click
+  scrollButton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  })
+
+  // Check scroll position
+  window.addEventListener('scroll', toggleScrollButton, { passive: true })
+  toggleScrollButton() // Initial check
+}
+
+// Scroll to hash section after content is loaded
+function scrollToHash() {
+  if (window.location.hash) {
+    const targetId = window.location.hash.substring(1)
+    setTimeout(() => {
+      const targetElement = document.getElementById(targetId)
+      if (targetElement) {
+        const navHeight = document.querySelector('.main-nav')?.offsetHeight || 0
+        const targetPosition = targetElement.offsetTop - navHeight - 20
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        })
+      }
+    }, 500) // Wait for content to render
+  }
+}
+
+// Load all content and handle hash navigation
+async function loadAllContent() {
+  await Promise.all([
+    loadHero(),
+    loadAbout(),
+    loadCertificates(),
+    loadContact()
+  ])
+  
+  // Scroll to hash if present (e.g., from external link)
+  scrollToHash()
+}
+
+loadAllContent()
 initNavigation()
+initScrollToTop()
 // Wait for hero to load before initializing parallax
 setTimeout(() => {
   initParallax()
