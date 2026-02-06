@@ -157,9 +157,13 @@ header {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    background-repeat: no-repeat;
     filter: brightness(0.6);
     z-index: -1;
     pointer-events: none;
+    /* Verhindere Layout-Shifts beim Laden */
+    will-change: auto;
+    transform: translateZ(0);
 }
 
 header > * {
@@ -195,6 +199,9 @@ header h1 {
     color: white !important;
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     font-size: 2.5rem;
+    /* Verhindere Layout-Shifts */
+    min-height: 1.2em;
+    line-height: 1.2;
 }
 
 header p {
@@ -541,6 +548,9 @@ html {
 section {
     margin-top: 4rem;
     padding: 2rem 0;
+    /* Sections sind standardmäßig sichtbar, um Layout-Shifts zu vermeiden */
+    opacity: 1;
+    transform: translateY(0);
 }
 
 section:first-of-type {

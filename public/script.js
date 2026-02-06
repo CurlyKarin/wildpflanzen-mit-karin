@@ -31,10 +31,22 @@ async function loadHero() {
   if (!hero) return
 
   const heroImageUrl = getImageUrl(hero.image)
-
-  document.getElementById('hero').innerHTML = `
+  const heroElement = document.getElementById('hero')
+  
+  // Lade das Bild zuerst vor, um Layout-Shifts zu vermeiden
+  if (heroImageUrl) {
+    const img = new Image()
+    await new Promise((resolve, reject) => {
+      img.onload = resolve
+      img.onerror = resolve // Auch bei Fehler weitermachen
+      img.src = heroImageUrl
+    })
+  }
+  
+  // Setze dann die Inhalte, wenn das Bild geladen ist
+  heroElement.innerHTML = `
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
-    <h1>${hero.headline}</h1>
+    <h1>${hero.headline || ''}</h1>
     <p>${hero.subheadline || ''}</p>
   `
 }
@@ -314,36 +326,49 @@ async function loadPageTitle() {
 
 // Sanfte Fade-in Animation beim Scrollen (nur wenn Section sichtbar wird)
 function initScrollAnimations() {
-  const observerOptions = {
-    threshold: 0.05,
-    rootMargin: '0px 0px -100px 0px'
-  }
+  // Warte kurz, damit alle Inhalte geladen sind
+  setTimeout(() => {
+    const observerOptions = {
+      threshold: 0.05,
+      rootMargin: '0px 0px -100px 0px'
+    }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1'
-        entry.target.style.transform = 'translateY(0)'
-        // Stoppe Beobachtung nach erstem Erscheinen
-        observer.unobserve(entry.target)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1'
+          entry.target.style.transform = 'translateY(0)'
+          // Stoppe Beobachtung nach erstem Erscheinen
+          observer.unobserve(entry.target)
+        }
+      })
+    }, observerOptions)
+
+    // Alle Sektionen beobachten - aber nur wenn sie noch nicht sichtbar sind
+    const sections = document.querySelectorAll('section')
+    sections.forEach((section, index) => {
+      // Erste Section sofort sichtbar machen
+      if (index === 0) {
+        section.style.opacity = '1'
+        section.style.transform = 'translateY(0)'
+      } else {
+        // Nur animieren wenn Section noch nicht im Viewport ist
+        const rect = section.getBoundingClientRect()
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+        
+        if (!isVisible) {
+          section.style.opacity = '0'
+          section.style.transform = 'translateY(20px)'
+          section.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
+          observer.observe(section)
+        } else {
+          // Wenn bereits sichtbar, sofort anzeigen
+          section.style.opacity = '1'
+          section.style.transform = 'translateY(0)'
+        }
       }
     })
-  }, observerOptions)
-
-  // Alle Sektionen beobachten - aber nur wenn sie noch nicht sichtbar sind
-  const sections = document.querySelectorAll('section')
-  sections.forEach((section, index) => {
-    // Erste Section sofort sichtbar machen
-    if (index === 0) {
-      section.style.opacity = '1'
-      section.style.transform = 'translateY(0)'
-    } else {
-      section.style.opacity = '0'
-      section.style.transform = 'translateY(20px)'
-      section.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
-      observer.observe(section)
-    }
-  })
+  }, 100)
 }
 
 // Load all content and handle hash navigation
@@ -365,10 +390,10 @@ async function loadAllContent() {
   // Navigation-Event-Listener nach dem Laden setzen
   initNavigation()
   
-  // Scroll-Animationen initialisieren
+  // Scroll-Animationen initialisieren - nachdem alles geladen ist
   setTimeout(() => {
     initScrollAnimations()
-  }, 100)
+  }, 300)
   
   // Scroll to hash if present (e.g., from external link)
   scrollToHash()
