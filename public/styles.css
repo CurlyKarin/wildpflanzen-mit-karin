@@ -1,3 +1,8 @@
+html {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 body {
     font-family: Georgia, "Times New Roman", serif;
     line-height: 1.7;
@@ -5,17 +10,21 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f5f5e8;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
 }
 
 /* NAVIGATION */
 .main-nav {
     position: sticky;
     top: 0;
+    left: 0;
+    right: 0;
     background: #faf8f3;
     box-shadow: 0 2px 8px rgba(45, 90, 39, 0.1);
     z-index: 1000;
-    margin: 0 calc(50% - 50vw);
-    width: 100vw;
+    width: 100%;
     border-bottom: 1px solid rgba(45, 90, 39, 0.1);
 }
 
@@ -27,6 +36,8 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 60px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .nav-logo {
@@ -138,10 +149,12 @@ header {
     overflow: visible;
     /* full-width hero */
     width: 100vw;
+    max-width: 100%;
     margin-left: calc(50% - 50vw);
     border-radius: 0;
     /* Hero-Texte scrollen normal über das fixe Bild */
     z-index: 1;
+    box-sizing: border-box;
 }
 
 .hero-image {
@@ -177,7 +190,10 @@ main {
     padding-top: 3rem;
     padding-bottom: 0;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
 }
 
 /* Zentriere den Inhalt innerhalb der Sections */
@@ -591,6 +607,15 @@ a, button {
 }
 
 @media (max-width: 700px) {
+    body {
+        padding: 0;
+    }
+    
+    main {
+        padding: 1rem;
+        padding-top: 2rem;
+    }
+    
     .certificate-item {
         width: 100%;
         min-width: auto;
@@ -603,6 +628,11 @@ a, button {
     
     .contact-button {
         align-self: flex-start;
+    }
+    
+    section {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
