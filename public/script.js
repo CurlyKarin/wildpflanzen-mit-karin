@@ -127,18 +127,45 @@ async function loadNavigation() {
   }
 }
 
+// OFFERS
+async function loadOffers() {
+  const offers = await fetchSanity(`*[_type == "offers"] | order(_createdAt asc)`)
+  if (!offers || offers.length === 0) return
+
+  const items = offers.map(offer => `
+    <article class="offer-item">
+      ${offer.title ? `<h3>${offer.title}</h3>` : ''}
+      ${offer.description ? `<p class="offer-description">${offer.description}</p>` : ''}
+      ${offer.targetGroup ? `<p class="offer-meta"><strong>Zielgruppe:</strong> ${offer.targetGroup}</p>` : ''}
+      ${offer.location ? `<p class="offer-meta"><strong>Ort:</strong> ${offer.location}</p>` : ''}
+      ${offer.note ? `<p class="offer-note">${offer.note}</p>` : ''}
+    </article>
+  `).join('')
+
+  document.getElementById('offers').innerHTML = `
+    <h2>Angebote</h2>
+    <div class="offers-grid">${items}</div>
+  `
+}
+
 // CONTACT
 async function loadContact() {
+  const contact = await fetchSanity(`*[_type == "contact"][0]`)
   const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
   const email = settings?.email || 'kontakt@example.com'
+  
+  // Text aus Sanity laden oder Fallback verwenden
+  const contactText = contact?.text || 'Ich biete verschiedene Coaching-Angebote zu essbaren Wildpflanzen an. Ob Einzelcoaching, Gruppenkurse oder Workshops – gemeinsam entdecken wir die Vielfalt der Natur.\n\nHast du Fragen zu meinen Angeboten oder möchtest du einen Termin vereinbaren? Dann melde dich gerne bei mir!'
+  
+  // Text in Absätze aufteilen
+  const paragraphs = contactText.split('\n\n').map(para => para.trim()).filter(para => para)
 
   document.getElementById('contact').innerHTML = `
     <h2>Kontakt</h2>
     <div class="contact-content">
       <a href="mailto:${email}?subject=Anfrage%20zu%20Wildpflanzen-Coaching" class="contact-button">Jetzt anfragen</a>
       <div class="contact-text">
-        <p>Ich biete verschiedene Coaching-Angebote zu essbaren Wildpflanzen an. Ob Einzelcoaching, Gruppenkurse oder Workshops – gemeinsam entdecken wir die Vielfalt der Natur.</p>
-        <p>Hast du Fragen zu meinen Angeboten oder möchtest du einen Termin vereinbaren? Dann melde dich gerne bei mir!</p>
+        ${paragraphs.map(para => `<p>${para}</p>`).join('')}
       </div>
     </div>
   `
@@ -299,6 +326,7 @@ async function loadAllContent() {
   await Promise.all([
     loadHero(),
     loadAbout(),
+    loadOffers(),
     loadCertificates(),
     loadContact()
   ])

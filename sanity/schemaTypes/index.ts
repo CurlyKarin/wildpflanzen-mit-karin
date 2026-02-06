@@ -5,6 +5,7 @@ import {offers} from './offers'
 import {certificate} from './certificate'
 import {season} from './season'
 import {gallery} from './gallery'
+import {contact} from './contact'
 
 export const schemaTypes = [
   siteSettings,
@@ -13,5 +14,6 @@ export const schemaTypes = [
   offers,
   certificate,
   season,
-  gallery
+  gallery,
+  contact
 ]
