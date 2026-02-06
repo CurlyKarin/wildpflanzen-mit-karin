@@ -86,6 +86,50 @@ async function loadCertificates() {
   `
 }
 
+// Sections basierend auf Navigation-Reihenfolge anordnen
+function reorderSections(navigationItems) {
+  if (!navigationItems || navigationItems.length === 0) return
+  
+  const main = document.querySelector('main')
+  if (!main) return
+  
+  // Extrahiere Section-IDs aus Navigation (z.B. #about -> about)
+  const sectionOrder = navigationItems
+    .map(item => {
+      const href = item.href
+      // Entferne # oder index.html# Präfix
+      return href.replace(/^(index\.html)?#/, '')
+    })
+    .filter(id => id) // Entferne leere IDs
+  
+  // Sammle alle Sections
+  const sections = Array.from(main.querySelectorAll('section'))
+  const sectionsMap = new Map()
+  sections.forEach(section => {
+    const id = section.id
+    if (id) {
+      sectionsMap.set(id, section)
+    }
+  })
+  
+  // Entferne alle Sections aus dem DOM
+  sections.forEach(section => section.remove())
+  
+  // Füge Sections in der Navigation-Reihenfolge wieder hinzu
+  sectionOrder.forEach(sectionId => {
+    const section = sectionsMap.get(sectionId)
+    if (section) {
+      main.appendChild(section)
+      sectionsMap.delete(sectionId) // Bereits eingefügt
+    }
+  })
+  
+  // Füge verbleibende Sections am Ende hinzu (falls welche nicht in Navigation sind)
+  sectionsMap.forEach(section => {
+    main.appendChild(section)
+  })
+}
+
 // NAVIGATION
 async function loadNavigation() {
   const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
@@ -124,6 +168,9 @@ async function loadNavigation() {
         if (navToggleEl) navToggleEl.classList.remove('nav-toggle-open')
       })
     })
+    
+    // Sections basierend auf Navigation-Reihenfolge anordnen
+    reorderSections(settings.navigationItems)
   }
 }
 
@@ -171,48 +218,7 @@ async function loadContact() {
   `
 }
 
-// PARALLAX EFFECT for Hero image
-function initParallax() {
-  const heroImage = document.querySelector('.hero-image')
-  if (!heroImage) return
-
-  let ticking = false
-
-  function updateParallax() {
-    const scrolled = window.pageYOffset
-    const hero = document.getElementById('hero')
-    if (!hero) return
-    
-    const heroHeight = hero.offsetHeight
-    const heroTop = hero.offsetTop
-    const heroBottom = heroTop + heroHeight
-    
-    // Only apply parallax when hero is in view
-    if (scrolled < heroBottom) {
-      // Parallax: image moves slower (30% speed for subtler effect)
-      const parallaxSpeed = 0.3
-      const yPos = -(scrolled - heroTop) * parallaxSpeed
-      // Limit movement to prevent gaps
-      const maxMove = heroHeight * 0.3
-      const limitedYPos = Math.max(-maxMove, yPos)
-      heroImage.style.transform = `translate3d(0, ${limitedYPos}px, 0)`
-    } else {
-      // Reset when scrolled past
-      heroImage.style.transform = `translate3d(0, ${-heroHeight * 0.3}px, 0)`
-    }
-    
-    ticking = false
-  }
-
-  function requestTick() {
-    if (!ticking) {
-      window.requestAnimationFrame(updateParallax)
-      ticking = true
-    }
-  }
-
-  window.addEventListener('scroll', requestTick, { passive: true })
-}
+// Parallax-Effekt entfernt - Hero-Bild ist jetzt fix mit background-attachment: fixed
 
 // NAVIGATION - Mobile menu toggle
 function initNavigation() {
@@ -281,19 +287,36 @@ function scrollToHash() {
   }
 }
 
-// Load page title from Sanity
+// Load page title and meta description from Sanity
 async function loadPageTitle() {
   const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
-  if (settings?.siteTitle) {
-    document.title = settings.siteTitle
+  if (settings) {
+    // Page title
+    if (settings.siteTitle) {
+      document.title = settings.siteTitle
+    }
+    
+    // Meta description
+    const metaDescription = document.querySelector('meta[name="description"]')
+    if (metaDescription && settings.description) {
+      metaDescription.setAttribute('content', settings.description)
+    }
+    
+    // Footer text
+    const footerText = document.getElementById('footer-text')
+    if (footerText) {
+      const name = settings.name || 'Karin'
+      const siteTitle = settings.siteTitle || 'Wildpflanzen entdecken und genießen'
+      footerText.textContent = `© ${name} · ${siteTitle}`
+    }
   }
 }
 
-// Sanfte Fade-in Animation beim Scrollen
+// Sanfte Fade-in Animation beim Scrollen (nur wenn Section sichtbar wird)
 function initScrollAnimations() {
   const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.05,
+    rootMargin: '0px 0px -100px 0px'
   }
 
   const observer = new IntersectionObserver((entries) => {
@@ -301,17 +324,25 @@ function initScrollAnimations() {
       if (entry.isIntersecting) {
         entry.target.style.opacity = '1'
         entry.target.style.transform = 'translateY(0)'
+        // Stoppe Beobachtung nach erstem Erscheinen
+        observer.unobserve(entry.target)
       }
     })
   }, observerOptions)
 
-  // Alle Sektionen beobachten
+  // Alle Sektionen beobachten - aber nur wenn sie noch nicht sichtbar sind
   const sections = document.querySelectorAll('section')
-  sections.forEach(section => {
-    section.style.opacity = '0'
-    section.style.transform = 'translateY(30px)'
-    section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out'
-    observer.observe(section)
+  sections.forEach((section, index) => {
+    // Erste Section sofort sichtbar machen
+    if (index === 0) {
+      section.style.opacity = '1'
+      section.style.transform = 'translateY(0)'
+    } else {
+      section.style.opacity = '0'
+      section.style.transform = 'translateY(20px)'
+      section.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out'
+      observer.observe(section)
+    }
   })
 }
 
@@ -345,7 +376,3 @@ async function loadAllContent() {
 
 loadAllContent()
 initScrollToTop()
-// Wait for hero to load before initializing parallax
-setTimeout(() => {
-  initParallax()
-}, 100)

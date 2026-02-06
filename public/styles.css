@@ -4,9 +4,13 @@ body {
     color: #2c3e2d;
     max-width: 800px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0;
     padding-top: 0;
     background-color: #f5f5e8;
+}
+
+body > main {
+    padding: 2rem;
 }
 
 /* NAVIGATION */
@@ -129,14 +133,14 @@ body {
 header {
     position: relative;
     text-align: center;
-    padding: 3rem 1.5rem;
-    min-height: 260px;
+    padding: 2rem 1.5rem;
+    min-height: 70vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: transparent;
     color: white;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     overflow: hidden;
     /* full-width hero */
     width: 100vw;
@@ -145,20 +149,34 @@ header {
 }
 
 .hero-image {
-    position: absolute;
-    inset: 0;
-    background-size: 120% auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     filter: brightness(0.6);
-    z-index: 0;
-    will-change: transform;
-    transform: translateZ(0);
-    min-height: 100%;
+    z-index: -1;
+    pointer-events: none;
 }
 
 header > * {
     position: relative;
     z-index: 1;
+}
+
+/* Content scrollt über das fixe Hero-Bild */
+main {
+    position: relative;
+    z-index: 1;
+    background-color: #f5f5e8;
+    margin-top: 0;
+    padding-top: 2rem;
+    padding-bottom: 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .hero-site-name {
@@ -448,8 +466,8 @@ h3 {
 /* Responsive hero sizing */
 @media (min-width: 900px) {
     header {
-        min-height: 420px;
-        padding: 5rem 2rem;
+        min-height: 70vh;
+        padding: 3rem 2rem;
     }
 
     header h1 {
@@ -464,8 +482,8 @@ h3 {
 
 @media (max-width: 899px) {
     header {
-        min-height: 220px;
-        padding: 2.5rem 1rem;
+        min-height: 60vh;
+        padding: 2rem 1rem;
     }
 
     header h1 {
@@ -474,6 +492,11 @@ h3 {
 
     header p {
         font-size: 1rem;
+    }
+    
+    /* Auf mobilen Geräten kann background-attachment: fixed problematisch sein */
+    .hero-image {
+        background-attachment: scroll;
     }
 }
 
@@ -521,7 +544,8 @@ section {
 }
 
 section:first-of-type {
-    margin-top: 2rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
 }
 
 /* Sanfte Bild-Lade-Animation */
@@ -570,8 +594,12 @@ a, button {
 
 /* FOOTER */
 footer {
-    margin-top: 4rem;
-    padding-top: 2rem;
+    position: relative;
+    z-index: 1;
+    background-color: #f5f5e8;
+    margin-top: 0;
+    padding: 2rem;
+    padding-top: 4rem;
     border-top: 1px solid rgba(45, 90, 39, 0.2);
     text-align: center;
 }
