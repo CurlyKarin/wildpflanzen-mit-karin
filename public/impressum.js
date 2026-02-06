@@ -43,10 +43,14 @@ async function loadNavigation() {
   const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
   if (!settings) return
 
-  // Logo-Text aus siteTitle laden
+  // Logo-Text aus siteTitle laden und Link setzen
   const logoEl = document.querySelector('.nav-logo')
-  if (logoEl && settings.siteTitle) {
-    logoEl.textContent = settings.siteTitle
+  if (logoEl) {
+    if (settings.siteTitle) {
+      logoEl.textContent = settings.siteTitle
+    }
+    // Logo-Link zeigt immer zur Startseite mit Hero
+    logoEl.href = 'index.html#hero'
   }
 
   // Menüpunkte aus navigationItems laden

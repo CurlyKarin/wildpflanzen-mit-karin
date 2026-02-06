@@ -147,10 +147,14 @@ async function loadNavigation() {
   const settings = await fetchSanity(`*[_type == "siteSettings"][0]`)
   if (!settings) return
 
-  // Logo-Text aus siteTitle laden
+  // Logo-Text aus siteTitle laden und Link setzen
   const logoEl = document.querySelector('.nav-logo')
-  if (logoEl && settings.siteTitle) {
-    logoEl.textContent = settings.siteTitle
+  if (logoEl) {
+    if (settings.siteTitle) {
+      logoEl.textContent = settings.siteTitle
+    }
+    // Logo-Link zeigt immer zum Hero
+    logoEl.href = '#hero'
   }
 
   // Menüpunkte aus navigationItems laden
@@ -173,11 +177,34 @@ async function loadNavigation() {
     // Event-Listener für Menü-Schließen neu setzen (da Menü neu gerendert wurde)
     const navLinks = navMenu.querySelectorAll('a')
     navLinks.forEach(link => {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (e) => {
         const navMenuEl = document.querySelector('.nav-menu')
         const navToggleEl = document.querySelector('.nav-toggle')
         if (navMenuEl) navMenuEl.classList.remove('nav-menu-open')
         if (navToggleEl) navToggleEl.classList.remove('nav-toggle-open')
+        
+        // Für Hash-Links auf der gleichen Seite: natives Scrolling unterstützen
+        const href = link.getAttribute('href')
+        if (href && href.startsWith('#')) {
+          const targetId = href.substring(1)
+          const targetElement = document.getElementById(targetId)
+          if (targetElement) {
+            // Warte kurz, damit Menü geschlossen ist
+            setTimeout(() => {
+              const navHeight = document.querySelector('.main-nav')?.offsetHeight || 0
+              const heading = targetElement.querySelector('h2')
+              const scrollTarget = heading || targetElement
+              const rect = scrollTarget.getBoundingClientRect()
+              const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+              const targetPosition = rect.top + scrollTop - navHeight - 10
+              
+              window.scrollTo({
+                top: Math.max(0, targetPosition),
+                behavior: 'smooth'
+              })
+            }, 100)
+          }
+        }
       })
     })
     
@@ -188,8 +215,18 @@ async function loadNavigation() {
 
 // OFFERS
 async function loadOffers() {
+  const offersSection = document.getElementById('offers')
+  if (!offersSection) return
+  
   const offers = await fetchSanity(`*[_type == "offers"] | order(_createdAt asc)`)
-  if (!offers || offers.length === 0) return
+  if (!offers || offers.length === 0) {
+    // Section leer lassen, aber trotzdem vorhanden für Navigation
+    // Stelle sicher, dass Section mindestens eine minimale Struktur hat
+    if (!offersSection.innerHTML.trim()) {
+      offersSection.innerHTML = '<h2>Angebote</h2>'
+    }
+    return
+  }
 
   const items = offers.map(offer => `
     <article class="offer-item">
@@ -201,7 +238,7 @@ async function loadOffers() {
     </article>
   `).join('')
 
-  document.getElementById('offers').innerHTML = `
+  offersSection.innerHTML = `
     <h2>Angebote</h2>
     <div class="offers-grid">${items}</div>
   `
@@ -282,20 +319,69 @@ function initScrollToTop() {
 }
 
 // Scroll to hash section after content is loaded
+// NUR wenn von einer anderen HTML-Seite gekommen wird (nicht bei normaler Navigation)
 function scrollToHash() {
-  if (window.location.hash) {
+  if (!window.location.hash) {
+    return
+  }
+  
+  // Prüfe, ob wir von einer anderen HTML-Seite kommen
+  const referrer = document.referrer
+  if (!referrer) {
+    // Kein Referrer = direkt geladen, nutze natives Scrolling
+    return
+  }
+  
+  try {
+    const referrerUrl = new URL(referrer)
+    const currentUrl = new URL(window.location.href)
+    
+    // Nur scrollen, wenn von anderer HTML-Seite (nicht gleiche Seite)
+    if (referrerUrl.pathname === currentUrl.pathname) {
+      // Gleiche Seite = natives Scrolling nutzen
+      return
+    }
+    
+    // Von anderer Seite gekommen - warte auf Content und scroll dann
     const targetId = window.location.hash.substring(1)
-    setTimeout(() => {
+    
+    const attemptScroll = (attempts = 0) => {
       const targetElement = document.getElementById(targetId)
       if (targetElement) {
         const navHeight = document.querySelector('.main-nav')?.offsetHeight || 0
-        const targetPosition = targetElement.offsetTop - navHeight - 20
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        })
+        
+        // Finde die Überschrift innerhalb der Section (h2) - wichtig für #about
+        const heading = targetElement.querySelector('h2')
+        const scrollTarget = heading || targetElement
+        
+        // Berechne Position: Section soll vollständig sichtbar sein, inkl. Überschrift
+        // Nutze getBoundingClientRect für präzisere Berechnung
+        const rect = scrollTarget.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        // Scroll so, dass die Überschrift der Section sichtbar ist
+        // Keine speziellen Bedingungen - alle Sections werden gleich behandelt
+        const targetPosition = rect.top + scrollTop - navHeight - 10
+        
+        // Warte kurz, damit Layout stabil ist
+        setTimeout(() => {
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth'
+          })
+        }, 100)
+        return true
+      } else if (attempts < 8) {
+        setTimeout(() => attemptScroll(attempts + 1), 300)
+        return false
       }
-    }, 500) // Wait for content to render
+      return false
+    }
+    
+    // Starte nach Verzögerung
+    setTimeout(() => attemptScroll(), 800)
+  } catch (e) {
+    // Bei Fehler einfach natives Scrolling nutzen
+    console.warn('Could not parse referrer for scrollToHash', e)
   }
 }
 
@@ -390,13 +476,22 @@ async function loadAllContent() {
   // Navigation-Event-Listener nach dem Laden setzen
   initNavigation()
   
+  // Warte, bis DOM vollständig gerendert ist (besonders wichtig nach reorderSections)
+  // Force reflow, damit alle Layout-Berechnungen abgeschlossen sind
+  void document.body.offsetHeight
+  
   // Scroll-Animationen initialisieren - nachdem alles geladen ist
   setTimeout(() => {
     initScrollAnimations()
   }, 300)
   
-  // Scroll to hash if present (e.g., from external link)
-  scrollToHash()
+  // Warte, bis alle Sections gerendert sind und Layout stabil ist
+  // Besonders wichtig für dynamische Inhalte wie Offers und nach reorderSections
+  setTimeout(() => {
+    // Scroll to hash if present (e.g., from external link or navigation from other pages)
+    // scrollToHash prüft selbst, ob es nötig ist
+    scrollToHash()
+  }, 600)
 }
 
 loadAllContent()

@@ -2,15 +2,9 @@ body {
     font-family: Georgia, "Times New Roman", serif;
     line-height: 1.7;
     color: #2c3e2d;
-    max-width: 800px;
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
-    padding-top: 0;
     background-color: #f5f5e8;
-}
-
-body > main {
-    padding: 2rem;
 }
 
 /* NAVIGATION */
@@ -141,11 +135,13 @@ header {
     background-color: transparent;
     color: white;
     margin-bottom: 0;
-    overflow: hidden;
+    overflow: visible;
     /* full-width hero */
     width: 100vw;
     margin-left: calc(50% - 50vw);
     border-radius: 0;
+    /* Hero-Texte scrollen normal über das fixe Bild */
+    z-index: 1;
 }
 
 .hero-image {
@@ -177,10 +173,18 @@ main {
     z-index: 1;
     background-color: #f5f5e8;
     margin-top: 0;
-    padding-top: 2rem;
+    padding: 2rem;
+    padding-top: 3rem;
     padding-bottom: 0;
-    border-radius: 20px 20px 0 0;
+    width: 100%;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Zentriere den Inhalt innerhalb der Sections */
+section {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero-site-name {
@@ -554,7 +558,7 @@ section {
 }
 
 section:first-of-type {
-    margin-top: 1rem;
+    margin-top: 0;
     padding-top: 1rem;
 }
 
