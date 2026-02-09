@@ -1,10 +1,167 @@
+/* Lora – SIL Open Font License (OFL), frei für private und kommerzielle Nutzung */
+@font-face {
+    font-family: "Lora";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-500.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-600.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-700.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-italic.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/lora-v26-latin-500italic.woff2") format("woff2");
+}
+
+/* Playfair Display (OFL) – Option A Überschriften */
+@font-face {
+    font-family: "Playfair Display";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/playfair-display-v30-latin-regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Playfair Display";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/playfair-display-v30-latin-500.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Playfair Display";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/playfair-display-v30-latin-600.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Playfair Display";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/playfair-display-v30-latin-700.woff2") format("woff2");
+}
+
+/* Inter (OFL) – Option A Text, Option C alles */
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/inter-v18-latin-regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/inter-v18-latin-500.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/inter-v18-latin-600.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/inter-v18-latin-700.woff2") format("woff2");
+}
+
+/* Cormorant (OFL) – Option B Überschriften */
+@font-face {
+    font-family: "Cormorant";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/cormorant-v21-latin-regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Cormorant";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/cormorant-v21-latin-500.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Cormorant";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/cormorant-v21-latin-600.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Cormorant";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/cormorant-v21-latin-700.woff2") format("woff2");
+}
+
+/* Source Sans 3 (OFL) – Option B Text */
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/source-sans-3-v15-latin-regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/source-sans-3-v15-latin-600.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Source Sans 3";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/source-sans-3-v15-latin-700.woff2") format("woff2");
+}
+
 html {
     overflow-x: hidden;
     width: 100%;
 }
 
 body {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: "Lora", Georgia, "Times New Roman", serif;
     line-height: 1.7;
     color: #2c3e2d;
     margin: 0;
@@ -13,6 +170,44 @@ body {
     width: 100%;
     max-width: 100%;
     position: relative;
+}
+
+/* Schrift-Optionen: data-fonts am <body> setzen (a, b, c oder weglassen = Lora) */
+
+/* Option A: ruhig & modern – Playfair Display (Überschriften) + Inter (Text) */
+body[data-fonts="a"] {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body[data-fonts="a"] h1,
+body[data-fonts="a"] h2,
+body[data-fonts="a"] h3,
+body[data-fonts="a"] .hero-site-name,
+body[data-fonts="a"] header h1 {
+    font-family: "Playfair Display", Georgia, serif;
+}
+
+/* Option B: natürlich & warm – Cormorant (Überschriften) + Source Sans 3 (Text) */
+body[data-fonts="b"] {
+    font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body[data-fonts="b"] h1,
+body[data-fonts="b"] h2,
+body[data-fonts="b"] h3,
+body[data-fonts="b"] .hero-site-name,
+body[data-fonts="b"] header h1 {
+    font-family: "Cormorant", Georgia, serif;
+}
+
+/* Option C: sehr klar & ruhig – überall Inter */
+body[data-fonts="c"] {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body[data-fonts="c"] h1,
+body[data-fonts="c"] h2,
+body[data-fonts="c"] h3,
+body[data-fonts="c"] .hero-site-name,
+body[data-fonts="c"] header h1 {
+    font-family: "Inter", sans-serif;
 }
 
 /* NAVIGATION */
