@@ -232,7 +232,7 @@ async function loadOffers() {
     <article class="offer-item">
       ${offer.title ? `<h3>${offer.title}</h3>` : ''}
       ${offer.description ? `<p class="offer-description">${offer.description}</p>` : ''}
-      ${offer.targetGroup ? `<p class="offer-meta"><strong>Zielgruppe:</strong> ${offer.targetGroup}</p>` : ''}
+      ${offer.targetGroup ? `<p class="offer-meta"><strong>Für:</strong> ${offer.targetGroup}</p>` : ''}
       ${offer.location ? `<p class="offer-meta"><strong>Ort:</strong> ${offer.location}</p>` : ''}
       ${offer.note ? `<p class="offer-note">${offer.note}</p>` : ''}
     </article>
@@ -253,8 +253,8 @@ async function loadContact() {
   // Text aus Sanity laden oder Fallback verwenden
   const contactText = contact?.text || 'Ich biete verschiedene Coaching-Angebote zu essbaren Wildpflanzen an. Ob Einzelcoaching, Gruppenkurse oder Workshops – gemeinsam entdecken wir die Vielfalt der Natur.\n\nHast du Fragen zu meinen Angeboten oder möchtest du einen Termin vereinbaren? Dann melde dich gerne bei mir!'
   
-  // Text in Absätze aufteilen
-  const paragraphs = contactText.split('\n\n').map(para => para.trim()).filter(para => para)
+  // Text in Absätze aufteilen (einzelne und doppelte Zeilenumbrüche)
+  const paragraphs = contactText.split(/\n+/).map(para => para.trim()).filter(para => para)
 
   document.getElementById('contact').innerHTML = `
     <h2>Kontakt</h2>
