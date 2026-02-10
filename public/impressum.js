@@ -129,7 +129,7 @@ async function loadNavigation() {
       logoEl.textContent = settings.siteTitle
     }
     // Logo-Link zeigt immer zur Startseite mit Hero
-    logoEl.href = 'index.html#hero'
+    logoEl.href = 'index.html'
   }
 
   // Menüpunkte aus navigationItems laden

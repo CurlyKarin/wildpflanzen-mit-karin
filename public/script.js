@@ -235,7 +235,7 @@ async function loadNavigation() {
       logoEl.textContent = settings.siteTitle
     }
     // Logo-Link zeigt immer zum Hero
-    logoEl.href = '#hero'
+    logoEl.href = 'index.html'
   }
 
   // Menüpunkte aus navigationItems laden
@@ -569,9 +569,11 @@ async function loadAllContent() {
   // Warte, bis alle Sections gerendert sind und Layout stabil ist
   // Besonders wichtig für dynamische Inhalte wie Offers und nach reorderSections
   setTimeout(() => {
-    // Scroll to hash if present (e.g., from external link or navigation from other pages)
-    // scrollToHash prüft selbst, ob es nötig ist
     scrollToHash()
+    // Saubere URL fürs Teilen: #hero aus Adresszeile entfernen
+    if (location.hash === '#hero' || location.hash === '') {
+      history.replaceState(null, '', location.pathname + location.search)
+    }
   }, 600)
 }
 
