@@ -25,6 +25,80 @@ function getImageUrl(imageField) {
   return `${IMAGE_BASE_URL}/${fileName}`
 }
 
+function isHeroInView() {
+  const hero = document.getElementById('hero')
+  if (!hero) return false
+  const rect = hero.getBoundingClientRect()
+  const vh = window.innerHeight || document.documentElement.clientHeight
+  return rect.bottom > 0 && rect.top < vh * 0.8
+}
+
+function initHeroPlantLabel(labelEl) {
+  const SHOW_AFTER_PAUSE_MS = 400   // Kurz warten nach Scroll – dann erscheint das Label schnell
+  const VISIBLE_DURATION_MS = 8000  // Nach Anzeige 8 Sekunden sichtbar
+  let showTimeout
+  let hideTimeout
+  const heroEl = document.getElementById('hero')
+
+  function showLabel() {
+    labelEl.classList.add('hero-plant-label-visible')
+  }
+
+  function hideLabel() {
+    labelEl.classList.remove('hero-plant-label-visible')
+  }
+
+  function startHideTimer() {
+    if (hideTimeout) clearTimeout(hideTimeout)
+    hideTimeout = setTimeout(() => {
+      hideLabel()
+      hideTimeout = null
+    }, VISIBLE_DURATION_MS)
+  }
+
+  function showFromScroll() {
+    if (!isHeroInView()) return
+    showLabel()
+    startHideTimer()
+  }
+
+  // Scroll: außerhalb Hero → sofort ausblenden; im Hero → nach kurzer Pause einblenden
+  function onScroll() {
+    if (!isHeroInView()) {
+      hideLabel()
+      if (showTimeout) { clearTimeout(showTimeout); showTimeout = null }
+      if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null }
+      return
+    }
+    hideLabel()
+    if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null }
+    if (showTimeout) clearTimeout(showTimeout)
+    showTimeout = setTimeout(() => {
+      showTimeout = null
+      showFromScroll()
+    }, SHOW_AFTER_PAUSE_MS)
+  }
+
+  // Hover oder Tippen auf den Hero → sofort anzeigen, 8 Sekunden sichtbar
+  function onHeroInteraction() {
+    if (!isHeroInView()) return
+    if (showTimeout) { clearTimeout(showTimeout); showTimeout = null }
+    showLabel()
+    startHideTimer()
+  }
+
+  if (heroEl) {
+    heroEl.addEventListener('mouseenter', onHeroInteraction)
+    heroEl.addEventListener('touchstart', onHeroInteraction, { passive: true })
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+
+  // Beim Laden: wenn Hero sichtbar, nach kurzer Verzögerung anzeigen (damit der Zusammenhang klar ist)
+  if (isHeroInView()) {
+    showTimeout = setTimeout(showFromScroll, SHOW_AFTER_PAUSE_MS)
+  }
+}
+
 // HERO
 async function loadHero() {
   const hero = await fetchSanity(`*[_type == "hero"][0]`)
@@ -51,6 +125,11 @@ async function loadHero() {
     <p>${hero.subheadline || ''}</p>
     ${plantLabel ? `<span class="hero-plant-label">${plantLabel}</span>` : ''}
   `
+
+  const plantLabelEl = heroElement.querySelector('.hero-plant-label')
+  if (plantLabelEl) {
+    initHeroPlantLabel(plantLabelEl)
+  }
 }
 
 // ABOUT

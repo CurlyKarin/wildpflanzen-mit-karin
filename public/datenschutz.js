@@ -24,6 +24,77 @@ function getImageUrl(imageField) {
   return `${IMAGE_BASE_URL}/${fileName}`
 }
 
+function isHeroInView() {
+  const hero = document.getElementById('hero')
+  if (!hero) return false
+  const rect = hero.getBoundingClientRect()
+  const vh = window.innerHeight || document.documentElement.clientHeight
+  return rect.bottom > 0 && rect.top < vh * 0.8
+}
+
+function initHeroPlantLabel(labelEl) {
+  const SHOW_AFTER_PAUSE_MS = 400
+  const VISIBLE_DURATION_MS = 8000
+  let showTimeout
+  let hideTimeout
+  const heroEl = document.getElementById('hero')
+
+  function showLabel() {
+    labelEl.classList.add('hero-plant-label-visible')
+  }
+
+  function hideLabel() {
+    labelEl.classList.remove('hero-plant-label-visible')
+  }
+
+  function startHideTimer() {
+    if (hideTimeout) clearTimeout(hideTimeout)
+    hideTimeout = setTimeout(() => {
+      hideLabel()
+      hideTimeout = null
+    }, VISIBLE_DURATION_MS)
+  }
+
+  function showFromScroll() {
+    if (!isHeroInView()) return
+    showLabel()
+    startHideTimer()
+  }
+
+  function onScroll() {
+    if (!isHeroInView()) {
+      hideLabel()
+      if (showTimeout) { clearTimeout(showTimeout); showTimeout = null }
+      if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null }
+      return
+    }
+    hideLabel()
+    if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null }
+    if (showTimeout) clearTimeout(showTimeout)
+    showTimeout = setTimeout(() => {
+      showTimeout = null
+      showFromScroll()
+    }, SHOW_AFTER_PAUSE_MS)
+  }
+
+  function onHeroInteraction() {
+    if (!isHeroInView()) return
+    if (showTimeout) { clearTimeout(showTimeout); showTimeout = null }
+    showLabel()
+    startHideTimer()
+  }
+
+  if (heroEl) {
+    heroEl.addEventListener('mouseenter', onHeroInteraction)
+    heroEl.addEventListener('touchstart', onHeroInteraction, { passive: true })
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+
+  if (isHeroInView()) {
+    showTimeout = setTimeout(showFromScroll, SHOW_AFTER_PAUSE_MS)
+  }
+}
+
 // Load hero image
 async function loadHero() {
   const hero = await fetchSanity(`*[_type == "hero"][0]`)
@@ -32,12 +103,18 @@ async function loadHero() {
   const heroImageUrl = getImageUrl(hero.image)
   const plantLabel = hero.plantLabel
 
-  document.getElementById('hero').innerHTML = `
+  const heroElement = document.getElementById('hero')
+  heroElement.innerHTML = `
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
     <h1>${hero.headline}</h1>
     <p>${hero.subheadline || ''}</p>
     ${plantLabel ? `<span class="hero-plant-label">${plantLabel}</span>` : ''}
   `
+
+  const plantLabelEl = heroElement.querySelector('.hero-plant-label')
+  if (plantLabelEl) {
+    initHeroPlantLabel(plantLabelEl)
+  }
 }
 
 // NAVIGATION
