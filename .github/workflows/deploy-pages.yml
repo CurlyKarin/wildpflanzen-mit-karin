@@ -5,9 +5,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
-  # optional: auch bei Push auf master auslösen, falls dein Standard-Branch so heißt
-  # branches: [main, master]
+    branches: [main, master]
 
 permissions:
   contents: read
