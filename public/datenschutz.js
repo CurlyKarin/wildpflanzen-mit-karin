@@ -30,11 +30,13 @@ async function loadHero() {
   if (!hero) return
 
   const heroImageUrl = getImageUrl(hero.image)
+  const plantLabel = hero.plantLabel
 
   document.getElementById('hero').innerHTML = `
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
     <h1>${hero.headline}</h1>
     <p>${hero.subheadline || ''}</p>
+    ${plantLabel ? `<span class="hero-plant-label">${plantLabel}</span>` : ''}
   `
 }
 

@@ -23,6 +23,12 @@ export const hero = defineType({
       options: {hotspot: true}
     }),
     defineField({
+      name: 'plantLabel',
+      title: 'Pflanzen-Label im Bild',
+      type: 'string',
+      description: 'Kurzer Hinweis zur Pflanze im Hero-Foto (z. B. „Giersch“). Optional.',
+    }),
+    defineField({
       name: 'ctaText',
       title: 'CTA Text',
       type: 'string'

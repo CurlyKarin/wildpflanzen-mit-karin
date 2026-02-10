@@ -32,6 +32,7 @@ async function loadHero() {
 
   const heroImageUrl = getImageUrl(hero.image)
   const heroElement = document.getElementById('hero')
+  const plantLabel = hero.plantLabel
   
   // Lade das Bild zuerst vor, um Layout-Shifts zu vermeiden
   if (heroImageUrl) {
@@ -48,6 +49,7 @@ async function loadHero() {
     ${heroImageUrl ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>` : ''}
     <h1>${hero.headline || ''}</h1>
     <p>${hero.subheadline || ''}</p>
+    ${plantLabel ? `<span class="hero-plant-label">${plantLabel}</span>` : ''}
   `
 }
 
