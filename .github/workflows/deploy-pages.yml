@@ -1,11 +1,12 @@
 # Deployt den Inhalt von /public als GitHub-Pages-Website.
-# In den Repo-Einstellungen: Settings → Pages → Source: "GitHub Actions".
+# Repo: Settings → Pages → Source muss "GitHub Actions" sein (nicht "Deploy from a branch").
 
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main, master]
+  workflow_dispatch:  # Manuell starten: Actions → "Deploy to GitHub Pages" → Run workflow
 
 permissions:
   contents: read
@@ -23,6 +24,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prüfen ob public/ vorhanden ist
+        run: |
+          echo "Inhalt Repo-Root:"
+          ls -la
+          echo "---"
+          if [ ! -d public ]; then
+            echo "FEHLER: Ordner 'public' fehlt im Repo!"
+            exit 1
+          fi
+          echo "Inhalt von public/:"
+          ls -la public/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
