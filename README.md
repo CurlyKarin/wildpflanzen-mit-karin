@@ -42,3 +42,23 @@ php -S localhost:8000
 cd sanity
 npx sanity schema deploy
 ```
+
+## Favicon (Tab-/App-Icon)
+
+Die Icons für Browser-Tab, Lesezeichen und „Zum Home-Bildschirm“ werden mit **[favicon.io](https://favicon.io)** erzeugt.
+
+### Icon später ändern
+
+1. Auf [favicon.io](https://favicon.io) gehen (z. B. „Image“ oder „Text“ nutzen).
+2. Neues Icon erzeugen und das **ZIP-Paket** herunterladen.
+3. ZIP entpacken.
+4. **Alle Dateien** aus dem Paket in den Ordner `public/` kopieren (bestehende Favicon-Dateien ersetzen):
+   - `favicon.ico`
+   - `favicon-16x16.png`
+   - `favicon-32x32.png`
+   - `apple-touch-icon.png`
+   - `android-chrome-192x192.png`
+   - `android-chrome-512x512.png`
+   - `site.webmanifest`
+5. In der `site.webmanifest` prüfen: Name und ggf. Theme-Farbe passen (z. B. `"name": "Wildpflanzen mit Karin"`).
+6. Änderungen committen und pushen – die `index.html` verweist bereits auf alle Dateien, es muss nichts im HTML geändert werden.
